@@ -11,7 +11,7 @@ function Filter({ filter, onChange }) {
         type="text"
         value={filter}
         onChange={onChange}
-      ></input>
+      />
     </div>
   );
 }
@@ -19,4 +19,5 @@ function Filter({ filter, onChange }) {
 Filter.propTypes = {
   filter: PropTypes.string.isRequired,
 };
+
 export default Filter;

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ContactForm from './ContactForm';
-import ContactList from './ContactList';
-import ContactItems from './ContactItems';
-import Filter from './Filter';
+import { nanoid } from 'nanoid';
+import ContactForm from '../ContactForm';
+import ContactList from '../ContactList';
+import Filter from '../Filter';
 import s from './App.module.css';
 
 class App extends Component {
@@ -16,7 +15,8 @@ class App extends Component {
     ],
     filter: '',
   };
-  formSubmit = data => {
+
+  addContact = data => {
     const { contacts } = this.state;
 
     contacts.find(
@@ -24,12 +24,14 @@ class App extends Component {
     )
       ? alert(`${data.name} is already in contact`)
       : this.setState(prevState => ({
-          contacts: [data, ...prevState.contacts],
+          contacts: [{...data, id: nanoid()}, ...prevState.contacts],
         }));
   };
+
   changeFilter = e => {
     this.setState({ filter: e.currentTarget.value });
   };
+
   filterByLetters = () => {
     const { contacts, filter } = this.state;
     const normalizedFilter = filter.toLowerCase();
@@ -37,31 +39,26 @@ class App extends Component {
       contact.name.toLowerCase().startsWith(normalizedFilter)
     );
   };
+
   deleteContact = contactId => {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== contactId),
     }));
   };
+
   render() {
     const { filter } = this.state;
+    const filteredContact = this.filterByLetters();
     return (
-      <div className={s.app}>
-        <ContactForm onSubmit={this.formSubmit} />
+      <div className={s.container}>
+        <ContactForm onSubmit={this.addContact} />
         <h3>Contacts</h3>
         <Filter filter={filter} onChange={this.changeFilter} />
-        <ContactList>
-          <ContactItems
-            contacts={this.filterByLetters()}
-            onDeleteContact={this.deleteContact}
-          />
-        </ContactList>
+        <ContactList contacts={filteredContact}
+            onDeleteContact={this.deleteContact} />
       </div>
     );
   }
 }
-ContactForm.propTypes = {
-  name: PropTypes.string,
-  number: PropTypes.number,
-};
 
 export default App;
